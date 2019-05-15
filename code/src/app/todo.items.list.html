@@ -1,0 +1,8 @@
+<div>
+    <todo-item *ngFor="let item of items" [id]="item.id"
+        [title]="item.title" [description]="item.description">
+    </todo-item>
+    <div class="text-center">
+        <button class="btn btn-success" routerLink="/add">+ Add ToDo Item</button>
+    </div>
+</div>
