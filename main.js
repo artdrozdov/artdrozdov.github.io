@@ -46,7 +46,7 @@ __webpack_require__.r(__webpack_exports__);
 var routes = [
     { path: 'to-do', component: _todo_items_list__WEBPACK_IMPORTED_MODULE_3__["ToDoList"] },
     { path: 'add', component: _todo_item_add_component__WEBPACK_IMPORTED_MODULE_4__["ToDoItemAddComponent"] },
-    { path: '', pathMatch: 'full', redirectTo: 'all' }
+    { path: '', pathMatch: 'full', redirectTo: 'to-do' }
 ];
 var AppRoutingModule = /** @class */ (function () {
     function AppRoutingModule() {
@@ -82,7 +82,7 @@ module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<!--The content below is only a placeholder and can be replaced.-->\n<div style=\"text-align:center\">\n  <h1>\n    Welcome to {{ title }}!\n  </h1>\n  <h2>\n    You clicked {{ clickCounter }} times.\n  </h2>\n  <button (click)=\"OnClick()\">Click</button>\n</div>\n<router-outlet></router-outlet>\n"
+module.exports = "<!--The content below is only a placeholder and can be replaced.-->\n<div style=\"text-align:center\">\n  <h1>\n    Welcome to {{ title }}!\n  </h1>\n</div>\n<br/>\n<div class=\"col\">\n  <router-outlet></router-outlet>\n</div>\n"
 
 /***/ }),
 
@@ -102,12 +102,8 @@ __webpack_require__.r(__webpack_exports__);
 
 var AppComponent = /** @class */ (function () {
     function AppComponent() {
-        this.title = 'sbx-app';
-        this.clickCounter = 0;
+        this.title = 'GoalZ App';
     }
-    AppComponent.prototype.OnClick = function () {
-        this.clickCounter++;
-    };
     AppComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
             selector: 'app-root',
@@ -218,22 +214,25 @@ __webpack_require__.r(__webpack_exports__);
 
 var StorageService = /** @class */ (function () {
     function StorageService() {
-        this.store = [{ title: 'Repair your car', description: 'You need to repair your car. You know.' }];
-        console.log('constructing service');
+        this.store = [{ id: this.getLastId() + 1, title: 'Add more goals!', description: 'You need to have more goals you know.' }];
     }
     StorageService.prototype.get = function () {
         return this.store;
     };
-    StorageService.prototype.delete = function (item) {
+    StorageService.prototype.delete = function (id) {
         for (var i = 0; i < this.store.length; i++) {
-            if (this.store[i].title === item.title && this.store[i].description === item.description)
+            if (this.store[i].id = id)
                 this.store.splice(i, 1);
         }
     };
     StorageService.prototype.add = function (item) {
-        console.log('adding item...');
-        console.log(item);
         this.store.push(item);
+    };
+    StorageService.prototype.getLastId = function () {
+        if (this.store != undefined && this.store.length > 0) {
+            return this.store[this.store.length - 1].id;
+        }
+        return 0;
     };
     StorageService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])(),
@@ -253,7 +252,7 @@ var StorageService = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<header>\r\n    <h2>Add ToDo item</h2>\r\n</header>\r\n<form (ngSubmit)=\"OnSubmit()\">\r\n    <label for=\"title\">Title:</label>\r\n    <input type=\"text\" [(ngModel)]=\"newItem.title\" name=\"title\" />\r\n    <br/>\r\n    <label for=\"description\">Description:</label>\r\n    <textarea [(ngModel)]=\"newItem.description\" name=\"description\"></textarea>\r\n    <br/>\r\n    <input type=\"submit\" value=\"Submit\" />\r\n</form>"
+module.exports = "<div class=\"col-md-8 offset-2\">\r\n<header>\r\n    <h2>What do you want to do?</h2>\r\n</header>\r\n<form (ngSubmit)=\"OnSubmit()\">\r\n    <label for=\"title\">Title:</label>\r\n    <input class=\"form-control\" type=\"text\" [(ngModel)]=\"newItem.title\" name=\"title\" />\r\n    <br/>\r\n    <label for=\"description\">Description:</label>\r\n    <textarea class=\"form-control\" [(ngModel)]=\"newItem.description\" name=\"description\"></textarea>\r\n    <br/>\r\n    <input class=\"btn btn-primary\" type=\"submit\" value=\"Submit\" />\r\n</form>\r\n</div>"
 
 /***/ }),
 
@@ -282,6 +281,7 @@ var ToDoItemAddComponent = /** @class */ (function () {
         this.storage = storage;
         this.router = router;
         this.newItem = new _entities_item__WEBPACK_IMPORTED_MODULE_3__["Item"]();
+        this.newItem.id = this.storage.getLastId() + 1;
     }
     ToDoItemAddComponent.prototype.OnSubmit = function () {
         console.log('form submitted');
@@ -310,7 +310,7 @@ var ToDoItemAddComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div>\r\n    <h2>{{ title }}</h2>\r\n    <h4>{{ description }}</h4>\r\n    <button (click)=\"onDelete()\">X</button>\r\n</div>"
+module.exports = "<div class=\"alert alert-dismissible alert-secondary\">\r\n    <button type=\"button\" class=\"close\" (click)=\"onDelete()\">X</button>    \r\n    <strong>{{ title }}</strong>\r\n    {{ description }}\r\n</div>\r\n"
 
 /***/ }),
 
@@ -338,9 +338,13 @@ var ToDoItem = /** @class */ (function () {
         this.router = router;
     }
     ToDoItem.prototype.onDelete = function () {
-        this.storage.delete({ title: this.title, description: this.description });
+        this.storage.delete(this.id);
         this.router.navigate(['/to-do']);
     };
+    tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Input"])(),
+        tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:type", Number)
+    ], ToDoItem.prototype, "id", void 0);
     tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Input"])(),
         tslib__WEBPACK_IMPORTED_MODULE_0__["__metadata"]("design:type", String)
@@ -370,7 +374,7 @@ var ToDoItem = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<div>\r\n    <todo-item *ngFor=\"let item of items\"\r\n        [title]=\"item.title\" [description]=\"item.description\">\r\n    </todo-item>\r\n    <a routerLink=\"/add\">Add</a>\r\n</div>"
+module.exports = "<div>\r\n    <todo-item *ngFor=\"let item of items\" [id]=\"item.id\"\r\n        [title]=\"item.title\" [description]=\"item.description\">\r\n    </todo-item>\r\n    <div class=\"text-center\">\r\n        <button class=\"btn btn-success\" routerLink=\"/add\">+ Add ToDo Item</button>\r\n    </div>\r\n</div>"
 
 /***/ }),
 
@@ -473,7 +477,7 @@ Object(_angular_platform_browser_dynamic__WEBPACK_IMPORTED_MODULE_1__["platformB
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\Code\ng\sbx-app\src\main.ts */"./src/main.ts");
+module.exports = __webpack_require__(/*! C:\Code\ng\sbx-app\code\src\main.ts */"./src/main.ts");
 
 
 /***/ })
